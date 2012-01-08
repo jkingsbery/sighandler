@@ -1,0 +1,9 @@
+{application, sighandler,
+ [
+  {description, "Handle UNIX signals in Erlang"},
+  {vsn, "0.1"},
+  {registered, []},
+  {applications, [kernel, stdlib]},
+  {mod, { sighandler_app, []}},
+  {env, []}
+ ]}.

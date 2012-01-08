@@ -1,0 +1,7 @@
+*.o
+*.so
+ebin
+.eunit
+.DS_Store
+c_src/sighandler_nif.c
+src/sighandler_nif.erl
