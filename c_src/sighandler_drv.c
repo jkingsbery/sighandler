@@ -139,7 +139,7 @@ static ErlDrvSSizeT sh_call(ErlDrvData drv_data,
   int index = 0;
   int rindex = 0;
   char* atom_txt = "sig_err";
-  if (sig < 1 || sig > 45) return -1;
+  if (sig < 1 || sig > 45) goto respond;
   ei_decode_version(buf, &index, &version);
   ei_decode_ei_term(buf, &index, &arg);
   if (arg.ei_type != ERL_ATOM_EXT) return -1;
@@ -154,6 +154,7 @@ static ErlDrvSSizeT sh_call(ErlDrvData drv_data,
   } else {
     return -1;
   }
+ respond:
   ei_encode_version(NULL, &rindex);
   ei_encode_atom(NULL, &rindex, atom_txt);
   if (rindex < rlen) {

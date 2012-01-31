@@ -129,7 +129,8 @@ setup_sig_tab() ->
 install(Sig, Fun, Ref, #state{handlers = Handlers, port = Port} = State) ->
     Installed = case sighandler_drv:status(Port, Sig) of
 		    active -> installed;
-		    inactive -> sighandler_drv:toggle(Port, Sig)
+		    inactive -> sighandler_drv:toggle(Port, Sig);
+		    Other -> Other
 		end,
     case Installed of
 	installed ->
