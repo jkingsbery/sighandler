@@ -30,8 +30,6 @@
 #define ErlDrvSSizeT int
 #endif
 
-#define SH_DEFINESIG(SIG) if(SIG) printf(SIG)
-
 static int sh_pipe[2];
 static void* sh_handlers_old[45];
 static int sh_handlers_installed[45];
