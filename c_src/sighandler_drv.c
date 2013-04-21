@@ -30,6 +30,11 @@
 #define ErlDrvSSizeT int
 #endif
 
+#if ERL_DRV_EXTENDED_MAJOR_VERSION > 2 || \
+   (ERL_DRV_EXTENDED_MAJOR_VERSION == 2 && ERL_DRV_EXTENDED_MINOR_VERSION >= 1)
+#define USE_ERL_DRV_OUTPUT_TERM
+#endif
+
 static int sh_pipe[2];
 static void* sh_handlers_old[45];
 static int sh_handlers_installed[45];
@@ -116,7 +121,11 @@ static void sh_io(ErlDrvData edd, ErlDrvEvent ev) {
     ErlDrvTermData spec[] = {ERL_DRV_PORT, dd->term_port,
 			     ERL_DRV_INT, (ErlDrvTermData) sig,
 			     ERL_DRV_TUPLE, 2};
+#ifdef USE_ERL_DRV_OUTPUT_TERM
+    erl_drv_output_term(driver_mk_port(dd->erl_port), spec, sizeof(spec) / sizeof(spec[0]));
+#else
     driver_output_term(dd->erl_port, spec, sizeof(spec) / sizeof(spec[0]));
+#endif
   }
 }
 
