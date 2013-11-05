@@ -16,3 +16,20 @@
     Hangup: 1
 
 Should work with Erlang R13B04 or later on UNIX like platforms. Has been known to work with R13B04 and R15B on Darwin and with R14B04 on Linux.
+
+To add a signal handler using configuration instead of programmatically, first create a config file
+
+    #hello.config
+    [
+        {sighandler, [
+            {handlers, [
+                {hup, {io, fwrite, ["Hello, world!~n"]}}
+            ]}
+        ]}
+    ].
+
+Then start erlang:
+
+    erl -pa ebin/ -config $CONFIGDIR/hello -s sighandler
+
+Then the handler will automatically be registered.
