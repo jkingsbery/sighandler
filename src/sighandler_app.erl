@@ -29,7 +29,26 @@
 %% Application callbacks
 %% ===================================================================
 
-start(_StartType, _StartArgs) -> sighandler_sup:start_link().
+start(_StartType, _StartArgs) -> 
+    case sighandler_sup:start_link() of 
+        {ok, Pid} ->
+            setup(),
+            {ok,Pid};
+        Error ->
+            Error
+    end.
+
+setup()->
+    case application:get_env(sighandler, handlers) of 
+        {ok, Registry} ->
+            lists:foreach(fun({Signal,{Module,Function,Args}}) ->
+                              sighandler:install(Signal,fun()->apply(Module,Function,Args) end)
+                          end, Registry);
+        undefined ->            
+            ok;
+        Reason ->
+            error_logger:error_msg("Error processing config: ~p~n", [Reason])
+    end.
 
 stop(_State) -> ok.
 
