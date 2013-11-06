@@ -23,7 +23,7 @@
 -include("sighandler.hrl").
 
 %% API
--export([start_link/0, stop/0, install/2, remove/1, remove/2, lookup_term/1]).
+-export([start_link/0, stop/0, install/2, remove/1, remove/2, lookup_term/1, registered/0]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
@@ -58,6 +58,10 @@ start_link() ->
 
 stop() -> gen_server:call(?SERVER, stop).
 
+registered()-> 
+    State=gen_server:call(?SERVER,registered),
+    State#state.handlers.
+
 %%%===================================================================
 %%% gen_server callbacks
 %%%===================================================================
@@ -82,6 +86,8 @@ handle_call({remove, Sig, Fun}, _From, #state{} = State) ->
     {ok, State0} = remove(Sig, Fun, State),
     {reply, ok, State0};
 handle_call(stop, _From, State) -> {stop, normal, ok, State};
+handle_call(registered,_From,State)->
+    {reply, State,State};
 handle_call(Request, _From, State) ->
     error_logger:info_msg(?MODULE_STRING " ~p ignoring call: ~p~n",
 			  [self(), Request]),
@@ -125,7 +131,6 @@ setup_sig_tab() ->
     lists:foreach(Fun, sighandler_nif:module_info(exports)).
 
 %% State management
-
 install(Sig, Fun, Ref, #state{handlers = Handlers, port = Port} = State) ->
     Installed = case sighandler_drv:status(Port, Sig) of
 		    active -> installed;
